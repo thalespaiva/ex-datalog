@@ -1,0 +1,74 @@
+    MAC5861 - Modelagem de Banco de Dados 2015
+    Profa. Kelly R. Bragheto
+
+    Resolução da Lista 3
+
+    Thales Areco Bandiera Paiva
+    thalespaiva@gmail.com
+    7156390
+
+[+] Resolução
+
+    Resolvi a lista usando a implementação pyDatalog de Datalog. Escrevi a
+    resolução usando o jupyter notebook. A versão somente leitura, em HTML,
+    está no arquivo ThalesPaiva_BD2015_Ex3.html.
+
+    Abaixo, listo os predicados usados em cada exercício. Note que alguns deles
+    são mais gerais do que os pedidos no enunciado. A consulta que resulta o
+    resultado do enunciado está descrita em ThalesPaiva_BD2015_Ex3.html.
+
+[+] Predicados usados no Ex1.
+
+    [A]
+        sequel(X, Y) <= direct_sequel(X, Y)
+        sequel(X, Y) <= direct_sequel(X, Z) & sequel(Z, Y)
+
+    [B]
+        super_sequel(X, Y) <= sequel(X, Y) & ~direct_sequel(X, Y)
+
+
+    [C]
+        mega_sequel(X, Y) <= direct_sequel(X, Z) & super_sequel(Z, Y)
+
+
+    [D]
+        at_least_2_direct_sequels(X) <= direct_sequel(X, Y) & direct_sequel(X, Z) & (Y != Z)
+
+
+    [E]
+        at_least_2_sequels(X) <= sequel(X, Y) & sequel(X, Z) & (Y != Z)
+
+
+    [F]
+        sequel_with_at_most_one_sequel(X, Y) <= sequel(X, Y) & ~at_least_2_sequels(Y)
+
+
+[+] Predicados usados no Ex2.
+
+    [A]
+        flight_from(From, Num) <= flight(Num, From, To, Tleave, Tarr)
+
+    [B]
+        leave_city_at_most_1hour_after_flight_arrival(City, NumArr, NumLeave) <=
+            flight(NumLeave, City, To, Tleave, Tarr) & flight(NumArr, From, City, T2leave, T2arr) &
+            (Tleave >= T2arr) & (Tleave <= T2arr + one_hour)
+
+    [C]
+        not_from(City, Num) <= flight(Num, From, To, Tleave, Tarr) & (From != City)
+
+    [D]
+        reachable_from_at(From, Conn, Dst, At) <= flight(Num, From, Dst, Tleave, At) & (Conn == Dst)
+        reachable_from_at(From, Conn, Dst, At) <= reachable_from_at(From, X, Conn, Tarr) &
+            flight(Num, Conn, Dst, T2leave, At) & (Tarr <= T2leave)
+
+        reachable_from(From, Conn, City) <= reachable_from_at(From, Conn, City, At)
+
+    [E]
+        reachable_bounded_time_conn(From, To) <= flight(Num, From, To, Tleave, Tarr)
+        reachable_bounded_time_conn(From, To) <= reachable_from_at(From, Conn, Dst, At) &
+            flight(Num, Dst, To, Tleave, Tarr) & (Tleave >= At) & (Tleave <= At + one_hour)
+
+    [F]
+        unreachable_flights(Num, City) <= flight(Num, From, To, Tleave, Tarr) &
+            (From != City) & ~reachable_from_at(From, Conn, From, At)
+
